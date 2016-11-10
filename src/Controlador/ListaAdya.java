@@ -34,7 +34,7 @@ public class ListaAdya {
         }
         palabras[i] = p;
         int j = 0;
-        while (palabras[j] != p) {
+        while (palabras[j].compareTo(p) != 0) {
             if (adyacente(palabras[j], p)) {
                 x = new NodoSimple(i);
                 x.setLiga(v[j]);
@@ -123,15 +123,15 @@ public class ListaAdya {
      * método sólo se encarga de llamar al que realmente hace los recorridos, y
      * de retornar el ArrayList.
      *
-     * @param i: vértice de partida
-     * @param j: vértice de llegada
+     * @param a: vértice/palabra de partida
+     * @param b: vértice/palabra de llegada
      * @return ArrayList de vectores (tipo String). Cada vector es un camino.
      */
-    public ArrayList<String[]> caminos(int i, int j) {
+    public ArrayList<String[]> caminos(String a, String b) {
         caminos.clear();
         int[] visitados = new int[palabras.length];
         int[] camino = new int[palabras.length];
-        caminos(i, j, 0, visitados, camino);
+        caminos(palabra(a), palabra(b), 0, visitados, camino);
         return caminos;
     }
 
@@ -175,6 +175,17 @@ public class ListaAdya {
         }
         caminos.add(n);
     }
+    
+    /**
+     * Método que determina el número del vértice que le corresponde a una palabra en el grafo
+     * @param p: palabra a determinar 
+     * @return 
+     */
+    private int palabra(String p){
+        int i = 0;
+        while(palabras[i].compareTo(p) != 0) i++;
+        return i;
+    }
 
 }
 
@@ -184,7 +195,7 @@ class ejercicios {
         String[] g = {"cero", "casa", "camo", "cama", "caro", "ceros", "cara"};
         ListaAdya h = new ListaAdya(g);
         h.escribirAdyacentes();
-        ArrayList<String[]> caminos = h.caminos(1, 4);
+        ArrayList<String[]> caminos = h.caminos("casa", "caro");
         int i = 0;
         while(i < caminos.size()){
             g = caminos.get(i);
@@ -195,16 +206,16 @@ class ejercicios {
             i++;
         }
         
-        caminos = h.caminos(6, 0);
-        i = 0;
-        while(i < caminos.size()){
-            g = caminos.get(i);
-            for (int j = 0; j < g.length; j++) {
-                System.out.print(g[j] +" - ");
-            }
-            System.out.println("");
-            i++;
-        }
+//        caminos = h.caminos(6, 0);
+//        i = 0;
+//        while(i < caminos.size()){
+//            g = caminos.get(i);
+//            for (int j = 0; j < g.length; j++) {
+//                System.out.print(g[j] +" - ");
+//            }
+//            System.out.println("");
+//            i++;
+//        }
     }
 
     public static void ejemplo(int i, int[] visitados) {
@@ -220,16 +231,3 @@ class ejercicios {
         ejemplo(i + 3, visitados);
     }
 }
-/**
- * if(seleccion.showDialog(null, "ABRIR ARCHIVO") == JFileChooser.APPROVE_OPTION){
-            archivo = seleccion.getSelectedFile();
-            if (archivo.canRead()) {
-                if (archivo.getName().endsWith(".txt")) {
-                    
-                } else {
-                    JOptionPane.showMessageDialog(null, "Por favor seleccione un archivo de texto (.txt).");
-                    
-                }
-            }
-       }
- */

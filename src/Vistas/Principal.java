@@ -4,6 +4,7 @@ import Controlador.GestionArchivos;
 import Controlador.ListaAdya;
 import java.awt.Color;
 import java.io.File;
+import java.util.ArrayList;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
@@ -13,6 +14,7 @@ public class Principal extends javax.swing.JFrame {
     File archivo;
     GestionArchivos gestion;
     ListaAdya grafo;
+    String[] palabras;
 
     public Principal() {
         initComponents();
@@ -21,6 +23,7 @@ public class Principal extends javax.swing.JFrame {
         scrollPane.getViewport().setOpaque(false);
         scrollPane.setOpaque(false);
         panel2.setEnabled(false);
+        //panel2.setVisible(false);
     }
 
     /**
@@ -34,14 +37,15 @@ public class Principal extends javax.swing.JFrame {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         panel1 = new javax.swing.JPanel();
-        abrir = new javax.swing.JButton();
+        btnAbrir = new javax.swing.JButton();
         panel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         p2 = new javax.swing.JComboBox();
         p1 = new javax.swing.JComboBox();
         jLabel3 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        btnCaminos = new javax.swing.JButton();
         scrollPane = new javax.swing.JScrollPane();
         consola = new javax.swing.JTextArea();
         fondo = new javax.swing.JLabel();
@@ -51,10 +55,10 @@ public class Principal extends javax.swing.JFrame {
 
         panel1.setBackground(new java.awt.Color(37, 37, 37));
 
-        abrir.setText("Abrir Archivo");
-        abrir.addActionListener(new java.awt.event.ActionListener() {
+        btnAbrir.setText("Abrir Archivo");
+        btnAbrir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                abrirActionPerformed(evt);
+                btnAbrirActionPerformed(evt);
             }
         });
 
@@ -64,14 +68,14 @@ public class Principal extends javax.swing.JFrame {
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel1Layout.createSequentialGroup()
                 .addGap(54, 54, 54)
-                .addComponent(abrir, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnAbrir, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(554, Short.MAX_VALUE))
         );
         panel1Layout.setVerticalGroup(
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panel1Layout.createSequentialGroup()
                 .addGap(67, 67, 67)
-                .addComponent(abrir, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnAbrir, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(70, Short.MAX_VALUE))
         );
 
@@ -81,34 +85,44 @@ public class Principal extends javax.swing.JFrame {
         jLabel1.setForeground(new java.awt.Color(204, 204, 204));
         jLabel1.setText("Palabra 2");
         panel2.add(jLabel1);
-        jLabel1.setBounds(400, 90, 90, 20);
+        jLabel1.setBounds(380, 90, 110, 20);
+
+        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel4.setForeground(new java.awt.Color(204, 204, 204));
+        jLabel4.setText("a la palabra 2.");
+        panel2.add(jLabel4);
+        jLabel4.setBounds(50, 40, 670, 20);
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(204, 204, 204));
-        jLabel2.setText("Presione el botón para encontrar los caminos de la plabra 1 a la palabra 2");
+        jLabel2.setText("Presione el botón para encontrar los caminos de la plabra 1");
         panel2.add(jLabel2);
-        jLabel2.setBounds(30, 34, 670, 20);
+        jLabel2.setBounds(50, 20, 670, 20);
 
-        p2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         panel2.add(p2);
-        p2.setBounds(490, 90, 100, 20);
+        p2.setBounds(490, 90, 100, 25);
 
-        p1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         panel2.add(p1);
-        p1.setBounds(180, 90, 100, 20);
+        p1.setBounds(180, 90, 100, 25);
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(204, 204, 204));
         jLabel3.setText("Palabra 1");
         panel2.add(jLabel3);
-        jLabel3.setBounds(90, 90, 90, 20);
+        jLabel3.setBounds(60, 90, 120, 20);
 
-        jButton1.setText("Caminos");
-        panel2.add(jButton1);
-        jButton1.setBounds(290, 130, 130, 20);
+        btnCaminos.setText("Caminos");
+        btnCaminos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCaminosActionPerformed(evt);
+            }
+        });
+        panel2.add(btnCaminos);
+        btnCaminos.setBounds(290, 130, 130, 30);
 
+        consola.setEditable(false);
         consola.setColumns(20);
-        consola.setFont(new java.awt.Font("Monospaced", 1, 18)); // NOI18N
+        consola.setFont(new java.awt.Font("Monospaced", 1, 14)); // NOI18N
         consola.setForeground(new java.awt.Color(255, 255, 255));
         consola.setRows(5);
         scrollPane.setViewportView(consola);
@@ -139,16 +153,17 @@ public class Principal extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void abrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_abrirActionPerformed
+    private void btnAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAbrirActionPerformed
         if (seleccion.showDialog(null, "ABRIR ARCHIVO") == JFileChooser.APPROVE_OPTION) {
             archivo = seleccion.getSelectedFile();
             if (archivo.canRead()) {
                 if (archivo.getName().endsWith(".txt")) {
-                    abrir.setEnabled(false);
+                    btnAbrir.setEnabled(false);
                     try {
                         gestion = new GestionArchivos(archivo);
-                        grafo = new ListaAdya(gestion.generarVector());
-
+                        palabras = gestion.generarVector();
+                        grafo = new ListaAdya(palabras);
+                        llenarCombos();
                     } catch (Exception e) { //Catch de excepciones
                         System.err.println("Ocurrio un error: " + e.getMessage());
                     }
@@ -157,7 +172,39 @@ public class Principal extends javax.swing.JFrame {
                 }
             }
         }
-    }//GEN-LAST:event_abrirActionPerformed
+    }//GEN-LAST:event_btnAbrirActionPerformed
+
+    private void btnCaminosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCaminosActionPerformed
+        ArrayList<String[]> caminos = grafo.caminos(p1.getSelectedItem().toString(), p2.getSelectedItem().toString());
+        consola.setText("");
+        consola.append("Caminos de " + p1.getSelectedItem().toString() + " a " + p2.getSelectedItem().toString() + "\n \n");
+        if (caminos.size() == 0) {
+            consola.append("No hay caminos entre estos vértices.");
+        } else {
+            String[] camino;
+            int n, menor = caminos.get(0).length;
+            for (int i = 0; i < caminos.size(); i++) {
+                camino = caminos.get(i);
+                consola.append("Camino " + (i + 1) + ": \n {");
+                n = camino.length;
+                if(n < menor) menor = n;
+                for (int j = 0; j < n; j++) {
+                    consola.append(camino[j]);
+                    if (j != n - 1) {
+                        consola.append(" -> ");
+                    } else {
+                        consola.append("} \n");
+                    }
+                }
+            }
+            consola.append("\n Camino(s) más corsto(s): \n");
+            for (int i = 0; i < caminos.size(); i++) {
+                if(caminos.get(i).length == menor){
+                    consola.append("Camino " + (i + 1) + "\n");
+                }
+            }
+        }
+    }//GEN-LAST:event_btnCaminosActionPerformed
 
     /**
      * @param args the command line arguments
@@ -194,15 +241,23 @@ public class Principal extends javax.swing.JFrame {
         });
     }
 
+    public void llenarCombos() {
+        for (int i = 0; i < palabras.length; i++) {
+            p1.addItem(palabras[i]);
+            p2.addItem(palabras[i]);
+        }
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton abrir;
+    private javax.swing.JButton btnAbrir;
+    private javax.swing.JButton btnCaminos;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JTextArea consola;
     private javax.swing.JLabel fondo;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JComboBox p1;
     private javax.swing.JComboBox p2;
     private javax.swing.JPanel panel1;
