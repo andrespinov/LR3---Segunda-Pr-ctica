@@ -39,7 +39,7 @@ public class GestionArchivos {
         char a;
         for (int i = 0; i < s.length(); i++) {
             a = minuscula(s.charAt(i));
-            if(a != ','){
+            if (a != ',') {
                 r = r + a;
             }
         }
@@ -51,14 +51,16 @@ public class GestionArchivos {
         char a = ',';
         if (Character.isLetterOrDigit(c)) {
             a = c;
-            if ((int) c > 64 && (int) c < 91) {
-                int b = (int) c + 32;
-                a = (char) b;
-            } else if ((int) c == 209) {
-                a = (char) 241;
+            if (Character.isAlphabetic(c)) {
+                if ((int) c > 64 && (int) c < 91) {
+                    int b = (int) c + 32;
+                    a = (char) b;
+                } else if ((int) c == 209) {
+                    a = (char) 241;
+                }
             }
             return a;
         }
-        return  a;
+        return a;
     }
 }
