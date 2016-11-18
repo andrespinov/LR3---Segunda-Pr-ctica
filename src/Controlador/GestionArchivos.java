@@ -24,7 +24,7 @@ public class GestionArchivos {
         ArrayList<String> palabras = new ArrayList<>();
         try {
             while ((linea = buffer.readLine()) != null) {
-                palabras.add(linea);
+                palabras.add(normalizar(linea));
             }
         } catch (IOException ex) {
             Logger.getLogger(GestionArchivos.class.getName()).log(Level.SEVERE, null, ex);
@@ -32,5 +32,33 @@ public class GestionArchivos {
         String[] p = new String[palabras.size()];
         p = palabras.toArray(p);
         return p;
+    }
+
+    public String normalizar(String s) {
+        String r = "";
+        char a;
+        for (int i = 0; i < s.length(); i++) {
+            a = minuscula(s.charAt(i));
+            if(a != ','){
+                r = r + a;
+            }
+        }
+
+        return r;
+    }
+
+    public char minuscula(char c) {
+        char a = ',';
+        if (Character.isLetterOrDigit(c)) {
+            a = c;
+            if ((int) c > 64 && (int) c < 91) {
+                int b = (int) c + 32;
+                a = (char) b;
+            } else if ((int) c == 209) {
+                a = (char) 241;
+            }
+            return a;
+        }
+        return  a;
     }
 }

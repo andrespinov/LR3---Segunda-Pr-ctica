@@ -49,6 +49,7 @@ public class Principal extends javax.swing.JFrame {
         scrollPane = new javax.swing.JScrollPane();
         consola = new javax.swing.JTextArea();
         fondo = new javax.swing.JLabel();
+        btnReinicio = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -100,10 +101,10 @@ public class Principal extends javax.swing.JFrame {
         jLabel2.setBounds(50, 20, 670, 20);
 
         panel2.add(p2);
-        p2.setBounds(490, 90, 100, 25);
+        p2.setBounds(490, 90, 100, 27);
 
         panel2.add(p1);
-        p1.setBounds(180, 90, 100, 25);
+        p1.setBounds(180, 90, 100, 27);
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(204, 204, 204));
@@ -118,7 +119,7 @@ public class Principal extends javax.swing.JFrame {
             }
         });
         panel2.add(btnCaminos);
-        btnCaminos.setBounds(290, 130, 130, 30);
+        btnCaminos.setBounds(300, 140, 130, 30);
 
         consola.setEditable(false);
         consola.setColumns(20);
@@ -130,17 +131,32 @@ public class Principal extends javax.swing.JFrame {
         panel2.add(scrollPane);
         scrollPane.setBounds(150, 200, 420, 180);
 
-        fondo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Recursos/Fondo.jpg"))); // NOI18N
         fondo.setFocusable(false);
         panel2.add(fondo);
-        fondo.setBounds(0, 0, 720, 430);
+        fondo.setBounds(0, 0, 0, 430);
+
+        btnReinicio.setText("Abrir otro archivo");
+        btnReinicio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnReinicioActionPerformed(evt);
+            }
+        });
+        panel2.add(btnReinicio);
+        btnReinicio.setBounds(530, 390, 140, 30);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(panel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -175,36 +191,47 @@ public class Principal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAbrirActionPerformed
 
     private void btnCaminosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCaminosActionPerformed
-        ArrayList<String[]> caminos = grafo.caminos(p1.getSelectedItem().toString(), p2.getSelectedItem().toString());
-        consola.setText("");
-        consola.append("Caminos de " + p1.getSelectedItem().toString() + " a " + p2.getSelectedItem().toString() + "\n \n");
-        if (caminos.size() == 0) {
-            consola.append("No hay caminos entre estos vértices.");
-        } else {
-            String[] camino;
-            int n, menor = caminos.get(0).length;
-            for (int i = 0; i < caminos.size(); i++) {
-                camino = caminos.get(i);
-                consola.append("Camino " + (i + 1) + ": \n {");
-                n = camino.length;
-                if(n < menor) menor = n;
-                for (int j = 0; j < n; j++) {
-                    consola.append(camino[j]);
-                    if (j != n - 1) {
-                        consola.append(" -> ");
-                    } else {
-                        consola.append("} \n");
+        if (p1.getSelectedItem() != null) {
+            ArrayList<String[]> caminos = grafo.caminos(p1.getSelectedItem().toString(), p2.getSelectedItem().toString());
+            consola.setText("");
+            consola.append("Caminos de " + p1.getSelectedItem().toString() + " a " + p2.getSelectedItem().toString() + "\n \n");
+            if (caminos.size() == 0) {
+                consola.append("No hay caminos entre estos vértices.");
+            } else {
+                String[] camino;
+                int n, menor = caminos.get(0).length;
+                for (int i = 0; i < caminos.size(); i++) {
+                    camino = caminos.get(i);
+                    consola.append("Camino " + (i + 1) + ": \n {");
+                    n = camino.length;
+                    if (n < menor) {
+                        menor = n;
+                    }
+                    for (int j = 0; j < n; j++) {
+                        consola.append(camino[j]);
+                        if (j != n - 1) {
+                            consola.append(" -> ");
+                        } else {
+                            consola.append("} \n");
+                        }
+                    }
+                }
+                consola.append("\n Camino(s) más corsto(s): \n");
+                for (int i = 0; i < caminos.size(); i++) {
+                    if (caminos.get(i).length == menor) {
+                        consola.append("Camino " + (i + 1) + "\n");
                     }
                 }
             }
-            consola.append("\n Camino(s) más corsto(s): \n");
-            for (int i = 0; i < caminos.size(); i++) {
-                if(caminos.get(i).length == menor){
-                    consola.append("Camino " + (i + 1) + "\n");
-                }
-            }
+        } else{
+            consola.setText("No hay palabras para buscar camino");
         }
     }//GEN-LAST:event_btnCaminosActionPerformed
+
+    private void btnReinicioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReinicioActionPerformed
+        p1.removeAllItems();
+        p2.removeAllItems();
+    }//GEN-LAST:event_btnReinicioActionPerformed
 
     /**
      * @param args the command line arguments
@@ -251,6 +278,7 @@ public class Principal extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAbrir;
     private javax.swing.JButton btnCaminos;
+    private javax.swing.JButton btnReinicio;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JTextArea consola;
     private javax.swing.JLabel fondo;
