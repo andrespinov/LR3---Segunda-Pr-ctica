@@ -7,10 +7,12 @@ package Vistas;
 
 import Controlador.GestionArchivos;
 import Controlador.ListaAdya;
+import Controlador.NodoSimple;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.view.mxGraph;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Random;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
@@ -189,33 +191,8 @@ public class Panel extends javax.swing.JFrame {
             consola.append("Caminos de " + p1.getSelectedItem().toString() + " a " + p2.getSelectedItem().toString() + "\n \n");
             if (caminos.size() == 0) {
                 consola.append("No hay caminos entre estos vértices.");
-            } else {
-                String[] camino;
-                int n, menor = caminos.get(0).length;
-                for (int i = 0; i < caminos.size(); i++) {
-                    camino = caminos.get(i);
-                    consola.append("Camino " + (i + 1) + ": \n [");
-                    n = camino.length;
-                    if (n < menor) {
-                        menor = n;
-                    }
-                    for (int j = 0; j < n; j++) {
-                        consola.append(camino[j]);
-                        if (j != n - 1) {
-                            consola.append(" > ");
-                        } else {
-                            consola.append("] \n");
-                        }
-                    }
-                }
-                consola.append("\n Camino(s) más corto(s): \n");
-                for (int i = 0; i < caminos.size(); i++) {
-                    if (caminos.get(i).length == menor) {
-                        consola.append("Camino " + (i + 1) + "\n");
-                    }
-                }
-            }
-        } else{
+            }  
+        }else{
             consola.setText("No hay palabras para buscar camino");
         }
     }//GEN-LAST:event_btnCaminosActionPerformed
@@ -255,23 +232,35 @@ public class Panel extends javax.swing.JFrame {
         });
     }
 
-    public static void initGraph() {
+    /**
+     * Este método inicializa el grafo 
+     */
+    public mxGraphComponent initGraph() {
 
         mxGraph graph = new mxGraph();
         Object parent = graph.getDefaultParent();
+        Random random = new Random(); 
 
         graph.getModel().beginUpdate();
         try {
-            Object v1 = graph.insertVertex(parent, null, "Hello", 20, 20, 80,
-                    30);
-            Object v2 = graph.insertVertex(parent, null, "World!", 240, 150,
-                    80, 30);
-            graph.insertEdge(parent, null, "Edge", v1, v2);
+            Object[] v = new Object[palabras.length];
+            NodoSimple[] vec = grafo.getV();
+            for (int i = 0; i < palabras.length; i++) {
+                v[i] = graph.insertVertex(parent, null, palabras[i], 15 + random.nextInt(), 15 + random.nextInt(), 80, 30, "ROUNDED");
+            }
+            for(int i = 0; i < palabras.length; i++){
+                NodoSimple p = vec[i].getLiga();
+                while(p != null){
+                    graph.insertEdge(parent, null, "", v[i], v[p.getDato()]);
+                    p = p.getLiga();
+                }
+            }
         } finally {
             graph.getModel().endUpdate();
         }
 
         mxGraphComponent graphComponent = new mxGraphComponent(graph);
+        return graphComponent;
     }
     
     public void llenarCombos() {
