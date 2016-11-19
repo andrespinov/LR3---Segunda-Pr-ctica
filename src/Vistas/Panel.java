@@ -5,16 +5,22 @@
  */
 package Vistas;
 
+import Controlador.AyudaGV;
 import Controlador.GestionArchivos;
 import Controlador.ListaAdya;
 import Controlador.NodoSimple;
-import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.view.mxGraph;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 /**
  *
@@ -27,12 +33,22 @@ public class Panel extends javax.swing.JFrame {
     GestionArchivos gestion;
     ListaAdya grafo;
     String[] palabras;
-    
+    NodoSimple[] v;
+    JPanel aux;
+
     /**
      * Creates new form Panel
      */
     public Panel() {
         initComponents();
+        setLocationRelativeTo(null);
+        p1.setEnabled(false);
+        p2.setEnabled(false);
+        btnCaminos.setEnabled(false);
+        btnSesamo.setEnabled(false);
+        nArchivo.setEnabled(false);
+        aux = new JPanel();
+        aux.setVisible(false);
     }
 
     /**
@@ -45,7 +61,6 @@ public class Panel extends javax.swing.JFrame {
     private void initComponents() {
 
         btnCaminos = new javax.swing.JButton();
-        jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         scrollPane = new javax.swing.JScrollPane();
         consola = new javax.swing.JTextArea();
@@ -54,8 +69,12 @@ public class Panel extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         btnAbrir = new javax.swing.JButton();
+        btnSesamo = new javax.swing.JButton();
+        nArchivo = new javax.swing.JButton();
+        panelGrafo = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         btnCaminos.setText("Caminos");
         btnCaminos.addActionListener(new java.awt.event.ActionListener() {
@@ -63,19 +82,6 @@ public class Panel extends javax.swing.JFrame {
                 btnCaminosActionPerformed(evt);
             }
         });
-
-        jPanel1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 467, Short.MAX_VALUE)
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
 
         jPanel2.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
@@ -91,11 +97,11 @@ public class Panel extends javax.swing.JFrame {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 324, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(scrollPane)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 401, Short.MAX_VALUE)
+            .addComponent(scrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
         );
 
         jLabel1.setFont(new java.awt.Font("Noto Sans", 0, 14)); // NOI18N
@@ -111,52 +117,84 @@ public class Panel extends javax.swing.JFrame {
             }
         });
 
+        btnSesamo.setText("Mostrar Grafo");
+        btnSesamo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSesamoActionPerformed(evt);
+            }
+        });
+
+        nArchivo.setText("Abrir otro archivo");
+        nArchivo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nArchivoActionPerformed(evt);
+            }
+        });
+
+        panelGrafo.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+
+        javax.swing.GroupLayout panelGrafoLayout = new javax.swing.GroupLayout(panelGrafo);
+        panelGrafo.setLayout(panelGrafoLayout);
+        panelGrafoLayout.setHorizontalGroup(
+            panelGrafoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 495, Short.MAX_VALUE)
+        );
+        panelGrafoLayout.setVerticalGroup(
+            panelGrafoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(12, 12, 12)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(12, 12, 12)
+                .addContainerGap()
+                .addComponent(panelGrafo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(btnCaminos, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addGroup(layout.createSequentialGroup()
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(jLabel1)
-                                .addComponent(p1, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGap(106, 106, 106)
+                                .addComponent(p1, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGap(40, 40, 40)
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel2)
-                                .addComponent(p2, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addComponent(btnAbrir, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(p2, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel2)))
+                        .addComponent(btnCaminos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnSesamo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(nArchivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnAbrir, javax.swing.GroupLayout.PREFERRED_SIZE, 336, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(12, 12, 12)
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btnAbrir)
-                        .addGap(6, 6, 6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addGap(6, 6, 6)
-                                .addComponent(p1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel2)
-                                .addGap(6, 6, 6)
-                                .addComponent(p2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(p2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(p1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnCaminos, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnSesamo)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(nArchivo))
+                    .addComponent(panelGrafo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -174,7 +212,13 @@ public class Panel extends javax.swing.JFrame {
                         palabras = gestion.generarVector();
                         grafo = new ListaAdya(palabras);
                         llenarCombos();
-                    } catch (Exception e) { //Catch de excepciones
+                        p1.setEnabled(true);
+                        p2.setEnabled(true);
+                        btnCaminos.setEnabled(true);
+                        btnSesamo.setEnabled(true);
+                        nArchivo.setEnabled(true);
+                        v = grafo.getV();
+                    } catch (Exception e) {
                         System.err.println("Ocurrio un error: " + e.getMessage());
                     }
                 } else {
@@ -191,11 +235,75 @@ public class Panel extends javax.swing.JFrame {
             consola.append("Caminos de " + p1.getSelectedItem().toString() + " a " + p2.getSelectedItem().toString() + "\n \n");
             if (caminos.size() == 0) {
                 consola.append("No hay caminos entre estos vértices.");
-            }  
-        }else{
+            } else {
+                String[] camino;
+                int n, menor = caminos.get(0).length;
+                for (int i = 0; i < caminos.size(); i++) {
+                    camino = caminos.get(i);
+                    consola.append("Camino " + (i + 1) + ": \n [");
+                    n = camino.length;
+                    if (n < menor) {
+                        menor = n;
+                    }
+                    for (int j = 0; j < n; j++) {
+                        consola.append(camino[j]);
+                        if (j != n - 1) {
+                            consola.append(" > ");
+                        } else {
+                            consola.append("] \n");
+                        }
+                    }
+                }
+                consola.append("\n Camino(s) más corto(s): \n");
+                for (int i = 0; i < caminos.size(); i++) {
+                    if (caminos.get(i).length == menor) {
+                        consola.append("Camino " + (i + 1) + "\n");
+                    }
+                }
+            }
+        } else {
             consola.setText("No hay palabras para buscar camino");
         }
     }//GEN-LAST:event_btnCaminosActionPerformed
+
+    private void btnSesamoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSesamoActionPerformed
+        AyudaGV aiuda = new AyudaGV(v, palabras);
+
+        String dotPath = "C:\\Program Files (x86)\\Graphviz2.38\\bin\\dot.exe";
+        String inputPath = "C:\\Users\\Alejo Castaño Rojas\\Documents\\NetBeansProjects\\LR3---Segunda-Pr-ctica\\grafoEnTexto.gv.txt";
+        String outputPath = "C:\\Users\\Alejo Castaño Rojas\\Documents\\NetBeansProjects\\LR3---Segunda-Pr-ctica\\src\\Recursos\\grafolo.jpg";
+        String tParam = "-Tjpg";
+        String tOParam = "-o";
+
+        String[] cmd = new String[5];
+        cmd[0] = dotPath;
+        cmd[1] = tParam;
+        cmd[2] = inputPath;
+        cmd[3] = tOParam;
+        cmd[4] = outputPath;
+
+        Runtime rt = Runtime.getRuntime();
+        try {
+            rt.exec(cmd);
+        } catch (IOException ex) {
+            Logger.getLogger(Panel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        int velocidad = 1000;
+        Timer timer;
+        TimerTask tarea;
+    }//GEN-LAST:event_btnSesamoActionPerformed
+
+    private void nArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nArchivoActionPerformed
+        // TODO add your handling code here:
+        p1.setEnabled(false);
+        p2.setEnabled(false);
+        btnCaminos.setEnabled(false);
+        nArchivo.setEnabled(false);
+        btnSesamo.setEnabled(false);
+        consola.setText("");
+        btnAbrir.setEnabled(true);
+    }//GEN-LAST:event_nArchivoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -232,54 +340,25 @@ public class Panel extends javax.swing.JFrame {
         });
     }
 
-    /**
-     * Este método inicializa el grafo 
-     */
-    public mxGraphComponent initGraph() {
-
-        mxGraph graph = new mxGraph();
-        Object parent = graph.getDefaultParent();
-        Random random = new Random(); 
-
-        graph.getModel().beginUpdate();
-        try {
-            Object[] v = new Object[palabras.length];
-            NodoSimple[] vec = grafo.getV();
-            for (int i = 0; i < palabras.length; i++) {
-                v[i] = graph.insertVertex(parent, null, palabras[i], 15 + random.nextInt(), 15 + random.nextInt(), 80, 30, "ROUNDED");
-            }
-            for(int i = 0; i < palabras.length; i++){
-                NodoSimple p = vec[i].getLiga();
-                while(p != null){
-                    graph.insertEdge(parent, null, "", v[i], v[p.getDato()]);
-                    p = p.getLiga();
-                }
-            }
-        } finally {
-            graph.getModel().endUpdate();
-        }
-
-        mxGraphComponent graphComponent = new mxGraphComponent(graph);
-        return graphComponent;
-    }
-    
     public void llenarCombos() {
-        for (int i = 0; i < palabras.length; i++) {
-            p1.addItem(palabras[i]);
-            p2.addItem(palabras[i]);
+        for (String palabra : palabras) {
+            p1.addItem(palabra);
+            p2.addItem(palabra);
         }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAbrir;
     private javax.swing.JButton btnCaminos;
+    private javax.swing.JButton btnSesamo;
     private javax.swing.JTextArea consola;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JButton nArchivo;
     private javax.swing.JComboBox p1;
     private javax.swing.JComboBox p2;
+    private javax.swing.JPanel panelGrafo;
     private javax.swing.JScrollPane scrollPane;
     // End of variables declaration//GEN-END:variables
 }
